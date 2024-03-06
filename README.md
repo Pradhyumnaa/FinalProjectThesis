@@ -1,5 +1,5 @@
 # Fake News Detection Model - Pradhyumnaa G
-This is the entire codebase of the code implemented for CM3070 Final Project.
+This is the entire codebase of Fake News Detection System implemented for CM3070 Final Project.
 
 ## Explaining The Folders
 
@@ -35,11 +35,10 @@ If you wish to run the code without any modification, simply run model_load_file
 
 If you wish to make some modifications, follow these steps. First, select a TFIDF model from the Models Folder and place it into corresponding folden in the ModelLoading Folder. LF0 will contain both model_load_file.ipynb and model_load_text.ipynb while LF1 and LF2 will only have model_load_file.ipynb.
 
-#### Then, modify this line to match the model you have copied.
+#### Then, modify this line in the file to match the model you have copied. This is to use the model that you copied instead of a default example.
 
-#Load the SVM Model
-model = joblib.load('svm_model_tfidf.joblib')
+#Load the MLP Model
+model = joblib.load('mlp_model_tfidf.joblib')
 
 ### 3. Run the File
-Run the file and at the end, you will receive an accuracy score of the model evaluated on a subset of the test set.
-
+Run the file and at the end, you will receive an accuracy score of the model evaluated on a subset of the test set consisting of about 100 fake news and 100 real news.
