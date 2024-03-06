@@ -1,0 +1,110 @@
+1 Support Vector Machine
+svm_model = SVC(kernel='rbf', C=5.0)
+
+A) TFIDF, SVD 0.3 - 85.82 (85.10 With 5 Fold Cross Validation)
+B) CV, SVD 0.3 - 96.02 (95.72 With 5 Fold Cross Validation) 1
+
+
+
+
+
+2 Logistic Regression
+log_reg_model = LogisticRegression(max_iter=1000, penalty='l2', multi_class='multinomial') # Initialize Logistic Regression model
+
+A) TFIDF, SVD 0.3 - 94.58 (94.79 With 5 Fold Cross Validation) 
+B) CV, SVD 0.3 - 95.47 (95.04 With 5 Fold Cross Validation) 1
+
+
+
+
+
+3 MLP Classifier
+MLPClassifier(hidden_layer_sizes=(600, 10), max_iter=300, activation='relu', solver='adam', learning_rate='adaptive', verbose=True)
+
+A) TFIDF, SVD 0.3 - 95.92 (95.87 With 5 Fold Cross Validation) 1
+B) CV, SVD 0.3 - 95.52 (95.87 With 5 Fold Cross Validation)
+
+
+
+
+
+4 AdaBoost Classifier
+# Define the base estimator (Decision Tree) with max depth 5
+base_estimator = DecisionTreeClassifier(max_depth=5)
+
+# Create an AdaBoost classifier with custom settings
+adaboost_model = AdaBoostClassifier(
+    estimator=base_estimator,  # Using the custom decision tree as the base estimator
+    n_estimators=115,  # Increasing the number of estimators to 700
+    learning_rate=0.5,  # Lowering the learning rate to 0.3
+    algorithm='SAMME.R'  # Using 'SAMME.R' algorithm for real probability estimates
+)
+
+A) TFIDF, SVD 0.3 - 93.14 (226m) 1
+A) CV, SVD 0.3 - 92.61 (214m)
+
+
+
+
+
+5 Gradient Boosting Machine
+# Create and fit the Gaussian Naive Bayes model
+gbm_model = GradientBoostingClassifier(learning_rate=0.5, n_estimators=200, loss='exponential')
+
+A) TFIDF, SVD 0.3 - 93.15 (221m) 1
+A) CV, SVD 0.3 - 92.79 (400m)
+
+
+
+
+
+6 CNN + Bi-LSTM
+#Define the CNN + Bi-LSTM model
+model = Sequential()
+model.add(Conv1D(filters=256, kernel_size=2, activation='relu', input_shape=(tfidf_matrix.shape[1], 1)))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Conv1D(filters=128, kernel_size=3, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Conv1D(filters=64, kernel_size=4, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Bidirectional(LSTM(64, return_sequences=True)))
+model.add(Dropout(0.3))
+model.add(Bidirectional(LSTM(32)))
+model.add(Dropout(0.3))
+model.add(Dense(16))
+model.add(Dropout(0.3))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+dense_tfidf_matrix = tfidf_matrix[:len(train_data)]
+dense_val_tfidf_matrix = tfidf_matrix[len(train_data):len(train_data) + len(val_data)]
+
+# Assuming train_data['label'] and val_data['label'] are Pandas Series, convert them to arrays
+train_labels = train_data['label'].values
+val_labels = val_data['label'].values
+
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1)
+
+# Reshape the input data
+dense_tfidf_with_linguistic = dense_tfidf_with_linguistic.toarray()  # Convert to dense array
+dense_val_tfidf_with_linguistic = dense_val_tfidf_with_linguistic.toarray()  # Convert to dense array
+
+# Fit the model using NumPy arrays with callbacks
+model.fit(dense_tfidf_with_linguistic, train_labels, 
+          epochs=100, batch_size=32, 
+          validation_data=(dense_val_tfidf_with_linguistic, val_labels),
+          callbacks=[early_stopping, reduce_lr])
+
+A) TFIDF, SVD 0.3 - 91.16 (250m) 1
+A) CV, SVD 0.3 - 89.78 (198m)
+
+
+
+
+
+7 Voting Classifier (SVM, LR, MLP, AdaBoost, Gradient Boosting Machine)
+A) TFIDF, SVD 0.3 - 94.78 (539m)
+A) CV, SVD 0.3 - 96.11 (537m) 1

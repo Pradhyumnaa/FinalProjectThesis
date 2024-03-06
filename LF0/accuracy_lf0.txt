@@ -1,0 +1,123 @@
+1 Support Vector Machine
+svm_model = SVC(kernel='rbf', C=5.0)
+
+A) TFIDF, SVD 0.3 - 96.49 (96.29 With 5 Fold Cross Validation)
+B) CV, SVD 0.3 - 94.93 (94.89 With 5 Fold Cross Validation)
+
+TFIDF, SVD 0.1 - 95.51
+TFIDF, SVD 0.2 - 96.13
+TFIDF, SVD 0.3 - 96.49
+TFIDF, SVD 0.4 - 96.61
+TFIDF, SVD 0.5 - 96.74
+TFIDF, SVD 0.6 - 96.74
+TFIDF, SVD 0.7 - 96.69
+TFIDF, SVD 0.8 - 96.76
+TFIDF, SVD 0.9 - 96.69
+TFIDF, SVD 1.0 - 96.69
+
+
+
+2 Logistic Regression
+log_reg_model = LogisticRegression(max_iter=1000, penalty='l2', multi_class='multinomial') # Initialize Logistic Regression model
+
+A) TFIDF, SVD 0.3 - 94.80 (94.91 With 5 Fold Cross Validation)
+B) CV, SVD 0.3 - 95.05 (94.78 With 5 Fold Cross Validation)
+
+TFIDF, SVD 0.1 - 92.86
+TFIDF, SVD 0.2 - 94.29
+TFIDF, SVD 0.3 - 94.80
+TFIDF, SVD 0.4 - 94.93
+TFIDF, SVD 0.5 - 95.00
+TFIDF, SVD 0.6 - 95.19
+TFIDF, SVD 0.7 - 95.28
+TFIDF, SVD 0.8 - 95.46
+TFIDF, SVD 0.9 - 95.39
+TFIDF, SVD 1.0 - 95.39
+
+
+3 MLP Classifier
+MLPClassifier(hidden_layer_sizes=(600, 10), max_iter=300, activation='relu', solver='adam', learning_rate='adaptive', verbose=True)
+
+A) TFIDF, SVD 0.3 - 96.15 (96.17 With 5 Fold Cross Validation)
+B) CV, SVD 0.3 - 95.42 (95.52 With 5 Fold Cross Validation)
+
+
+
+
+
+4 AdaBoost Classifier
+# Define the base estimator (Decision Tree) with max depth 5
+base_estimator = DecisionTreeClassifier(max_depth=5)
+
+# Create an AdaBoost classifier with custom settings
+adaboost_model = AdaBoostClassifier(
+    estimator=base_estimator,  # Using the custom decision tree as the base estimator
+    n_estimators=115,  # Increasing the number of estimators to 700
+    learning_rate=0.5,  # Lowering the learning rate to 0.3
+    algorithm='SAMME.R'  # Using 'SAMME.R' algorithm for real probability estimates
+)
+
+A) TFIDF, SVD 0.3 - 91.97 (211m)
+A) CV, SVD 0.3 - 91.53 (218m)
+
+
+
+
+
+5 Gradient Boosting Machine
+# Create and fit the Gaussian Naive Bayes model
+gbm_model = GradientBoostingClassifier(learning_rate=0.5, n_estimators=200, loss='exponential')
+
+A) TFIDF, SVD 0.3 - 92.36
+A) CV, SVD 0.3 - 91.48
+
+
+
+
+
+6 CNN + Bi-LSTM
+#Define the CNN + Bi-LSTM model
+model = Sequential()
+model.add(Conv1D(filters=256, kernel_size=2, activation='relu', input_shape=(tfidf_matrix.shape[1], 1)))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Conv1D(filters=128, kernel_size=3, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Conv1D(filters=64, kernel_size=4, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Bidirectional(LSTM(64, return_sequences=True)))
+model.add(Dropout(0.3))
+model.add(Bidirectional(LSTM(32)))
+model.add(Dropout(0.3))
+model.add(Dense(16))
+model.add(Dropout(0.3))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+dense_tfidf_matrix = tfidf_matrix[:len(train_data)]
+dense_val_tfidf_matrix = tfidf_matrix[len(train_data):len(train_data) + len(val_data)]
+
+# Assuming train_data['label'] and val_data['label'] are Pandas Series, convert them to arrays
+train_labels = train_data['label'].values
+val_labels = val_data['label'].values
+
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1)
+
+# Fit the model using NumPy arrays with callbacks
+model.fit(dense_tfidf_matrix, train_labels, 
+          epochs=100, batch_size=32, 
+          validation_data=(dense_val_tfidf_matrix, val_labels),
+          callbacks=[early_stopping, reduce_lr])
+
+A) TFIDF, SVD 0.3 - 90.00
+A) CV, SVD 0.3 - 87.43
+
+
+
+
+
+7 Voting Classifier (SVM, LR, MLP, AdaBoost, Gradient Boosting Machine)
+A) TFIDF, SVD 0.3 - 95.69
+A) CV, SVD 0.3 - 95.55
