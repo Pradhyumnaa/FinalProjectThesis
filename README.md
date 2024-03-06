@@ -25,10 +25,10 @@ This is the file that creates training, validation and testing sets. All models 
 These are files that have a model name followed by either main or cv. main is for TFIDF while cv is for Count Vectorizer.
 
 ## Running an Existing Model
-If you want an example of how to load and run an existing model without following the model training process, follow these steps.
+If you want an example of how to load and run an existing model without following the model training process, follow these steps. For this demonstration, only models trained on TFIDF have been saved due to the memory constraints in GitHub.
 
 ### 1. Select either LF0, LF1 and LF2. Then, go into the Models folder.
-Inside these folder, there is a large list of models that have been saved as a result of the model training process within the "Models" folder. Not all models have been exported due to GitHub Repo Size Constraints. Select one of these models. Please note that there is some variation within the LF0 Models folder as some have been trained with a different SVD function and thus, will require some modifications in the next step. 
+Inside these folder, there is a large list of models that have been saved as a result of the model training process within the "Models" folder. Not all models have been exported due to GitHub Repo Size Constraints. Select one of these models. Please note that you might need to make some modifications depending on which model you selected.
 
 ### 2. Copy a model and place it into the corresponding ModelLoading Folder.
 If you wish to run the code without any modification, simply run model_load_file.ipynb.
@@ -41,5 +41,5 @@ If you wish to make some modifications, follow these steps. First, select a TFID
 model = joblib.load('svm_model_tfidf.joblib')
 
 ### 3. Run the File
-Run the file and at the end, you will receive an accuracy score of the model evaluated on the unseen test set.
+Run the file and at the end, you will receive an accuracy score of the model evaluated on a subset of the test set.
 
