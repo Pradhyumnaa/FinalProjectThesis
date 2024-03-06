@@ -25,7 +25,7 @@ This is the file that creates training, validation and testing sets. All models 
 These are files that have a model name followed by either main or cv. main is for TFIDF while cv is for Count Vectorizer.
 
 ## Running an Existing Model
-If you want an example of how to load and run an existing model without following the model training process, follow these steps. For this demonstration, only models trained on TFIDF have been saved due to the memory constraints in GitHub.
+If you want an example of how to load and run an existing model without following the model training process, follow these steps. You can select either the TFIDF model or the CV model but will need to make slight modifications.
 
 ### 1. Select either LF0, LF1 and LF2. Then, go into the Models folder.
 Inside these folder, there is a large list of models that have been saved as a result of the model training process within the "Models" folder. Not all models have been exported due to GitHub Repo Size Constraints. Select one of these models. Please note that you might need to make some modifications depending on which model you selected.
@@ -36,9 +36,17 @@ If you wish to run the code without any modification, simply run model_load_file
 If you wish to make some modifications, follow these steps. First, select a TFIDF model from the Models Folder and place it into corresponding folden in the ModelLoading Folder. LF0 will contain both model_load_file.ipynb and model_load_text.ipynb while LF1 and LF2 will only have model_load_file.ipynb.
 
 #### Then, modify this line in the file to match the model you have copied. This is to use the model that you copied instead of a default example.
-
 #Load the MLP Model
 model = joblib.load('mlp_model_tfidf.joblib')
+
+#### If you are using the CountVectorizer based model (These models have the suffix CV), modify this line in the file to use the CV Vectorizer instead.
+#Load the TF-IDF vectorizer
+vectorizer = joblib.load('..\\tfidf_vectorizer.joblib')
+
+#### to
+
+#Load the CV vectorizer
+vectorizer = joblib.load('..\\cv_vectorizer.joblib')
 
 ### 3. Run the File
 Run the file and at the end, you will receive an accuracy score of the model evaluated on a subset of the test set consisting of about 100 fake news and 100 real news.
