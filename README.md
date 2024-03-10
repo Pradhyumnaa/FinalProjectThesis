@@ -46,7 +46,7 @@ vectorizer = joblib.load('..\\tfidf_vectorizer.joblib')
 #### to
 
 #Load the CV vectorizer
-vectorizer = joblib.load('..\\cv_vectorizer.joblib')
+vectorizer = joblib.load('..\\count_vectorizer.joblib')
 
 ### 3. Run the File
 Run the file and at the end, you will receive an accuracy score of the model evaluated on a subset of the test set consisting of about 100 fake news and 100 real news.
